@@ -26,7 +26,6 @@ app.get("/hello", (req, res) => {
 
 app.post("/update", async (req, res) => {
   const sd = await new SensorData(req.body).save();
-  console.log(req.body);
   io.emit("update",sd.toJSON());
   res.send("SUCCESS");
 })
