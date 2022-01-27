@@ -1,7 +1,12 @@
 <template>
   <!-- <img alt="Vue logo" src="./assets/logo.png" /> -->
   <div class="overlay">
-    {{ data }}
+    <div class="blackish">
+      <p>Water: {{ data.waterLevel }} Liter</p>
+      <p>Temperature: {{ data.temperature }} °C</p>
+      <p>Ec: {{ data.ec }} mS/cm</p>
+      <p>pH: {{ data.ph / 10 }}</p>
+    </div>
   </div>
   <!-- <Particles
     id="particle"
@@ -58,7 +63,14 @@ import { ref } from "vue";
 import { io } from "socket.io-client";
 const socket = io("localhost:8000");
 
-const data = ref<string>("");
+interface SensorData {
+  waterLevel: number;
+  temperature: number;
+  ec: number;
+  ph: number;
+}
+
+const data = ref<SensorData>({ waterLevel: 0, temperature: 0, ec: 0, ph: 0 });
 
 socket.on("connection", () => {
   console.log("tjo");
@@ -70,8 +82,8 @@ socket.on("update", (_data) => {
 });
 </script>
 
-<style>
-body  {
+<style lang="less">
+body {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
@@ -91,6 +103,20 @@ body  {
 .overlay {
   width: 100vw;
   height: 100vh;
-  color: gray;
+  color: white;
+  .blackish {
+    margin: 0;
+    padding: 10px;
+    // width: 100px;
+    display: inline-block;
+    background-color: rgba(black, 0.2);
+
+    p {
+      margin: 0;
+      font-size: 1.5em;
+      text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+        1px 1px 0 #000;
+    }
+  }
 }
 </style>
