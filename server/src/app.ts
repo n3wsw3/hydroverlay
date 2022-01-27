@@ -31,7 +31,9 @@ app.post("/update", async (req, res) => {
   res.send("SUCCESS");
 })
 
-io.on("connection", (socket: any) => {
+io.on("connection", async (socket: any) => {
+  const latest = (await SensorData.find().sort("-time").limit(1))[0];
+  socket.emit("update", latest);
   console.log("a user connected");
 });
 
