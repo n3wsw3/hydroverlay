@@ -37,10 +37,6 @@ io.on("connection", async (socket: any) => {
   console.log("a user connected");
 });
 
-// setInterval(() => {
-//   io.emit("update", "DATA UPDATED FROM WEBSERVER "+Math.floor(Math.random()*100));
-// }, 2000);
-
 server.listen(process.env.API_PORT || 8000, async () => {
   await mongoose.connect(process.env.MONGO_URL || "mongodb://localhost/hydro");
   console.log(`Server running on: ${process.env.API_PORT || 8000}`);
