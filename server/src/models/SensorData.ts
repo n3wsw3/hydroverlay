@@ -8,12 +8,14 @@ interface SensorData {
   time: number;
 }
 
-const SensorDataSchema = new mongoose.Schema<SensorData>({
-  waterLevel: Number,
-  temperature: Number,
-  ec: Number,
-  ph: Number,
-  time: Number,
-});
+const SensorDataSchema = new mongoose.Schema<SensorData>(
+  {
+    waterLevel: Number,
+    temperature: Number,
+    ec: Number,
+    ph: Number,
+  },
+  { timestamps: true }
+);
 
 export const SensorData = mongoose.model("SensorData", SensorDataSchema);
