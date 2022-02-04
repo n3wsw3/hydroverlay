@@ -14,10 +14,12 @@
     "dotenv": "^14.3.2",
     "express": "^4.17.2",
     "mongoose": "^6.1.8",
-    "socket.io": "^4.4.1"
+    "socket.io": "^4.4.1",
+    "serialport": "^9.2.8"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
-    "ts-node-dev": "^1.1.8"
+    "ts-node-dev": "^1.1.8",
+    "@types/serialport": "^8.0.2"
   }
 }
