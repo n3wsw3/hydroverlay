@@ -44,7 +44,7 @@ const ecData = ref<JSC.JSCSeriesConfig>({
   yAxis: "ec",
   defaultPoint_label: {
     visible: true,
-    text: "%yValue S/cm",
+    text: "%yValue mS/cm",
   },
   points: [],
 });
@@ -103,22 +103,31 @@ const createChart = (
 
 const waterChart = createChart("Water Level", waterData, [0, 50]);
 const tempChart = createChart("Temperature", tempData, [10, 30]);
-const ecChart = createChart("EC", ecData, [-1, 5]);
+const ecChart = createChart("EC", ecData, [0, 4000]);
 const phChart = createChart("pH", phData, [3, 8]);
 
-const fixed = (value: number, n: number) => parseFloat(value.toFixed(n));
+// const fixed = (value: number, n: number) => parseFloat(value.toFixed(n));
+const precision = (value: number, n: number) => parseFloat(value.toPrecision(n));
 
-socket.on("update", (_data: SensorData) => {
-  waterData.value.points?.push([_data.createdAt, fixed(_data.waterLevel, 1)]);
-  tempData.value.points?.push([_data.createdAt, fixed(_data.temperature, 1)]);
-  ecData.value.points?.push([_data.createdAt, fixed(_data.ec, 1)]);
-  phData.value.points?.push([_data.createdAt, fixed(_data.ph, 1)]);
+const updateData = (data: SensorData) => {
+  waterData.value.points?.push([data.createdAt, precision(data.waterLevel, 3)]);
+  tempData.value.points?.push([data.createdAt, precision(data.temperature, 3)]);
+  ecData.value.points?.push([data.createdAt, precision(data.ec*1000, 3)]);
+  phData.value.points?.push([data.createdAt, precision(data.ph, 2)]);
 
   // Make sure only 30 data points are showed at the same time.
   while (waterData.value.points?.length > 30) waterData.value.points?.shift();
   while (tempData.value.points?.length > 30) tempData.value.points?.shift();
   while (ecData.value.points?.length > 30) ecData.value.points?.shift();
   while (phData.value.points?.length > 30) phData.value.points?.shift();
+}
+
+socket.on("update", (data: SensorData | SensorData[]) => {
+  if (Array.isArray(data)) {
+    data.forEach(a => updateData(a));
+  } else {
+    updateData(data);
+  }
 });
 </script>
 
@@ -146,6 +155,7 @@ body {
   height: 100vh;
   color: white;
   display: flex;
+  flex-direction: column;
   .blackish {
     margin: 0;
     padding: 10px;
@@ -163,7 +173,6 @@ body {
   .chart_container {
     width: 100%;
     display: flex;
-    flex-direction: row;
     margin-top: auto;
     .row {
       display: flex;
@@ -172,6 +181,20 @@ body {
         display: inline-block;
         flex: 1;
         height: 200px;
+        padding: 0.5em;
+      }
+    }
+  }
+
+  &.side {
+    flex-direction: row;
+    .chart_container {
+      margin-top: 0;
+      margin-left: auto;
+      width: 400px;
+      flex-direction: column;
+      .row {
+        flex-direction: column;
       }
     }
   }

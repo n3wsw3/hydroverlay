@@ -40,7 +40,7 @@ const io = new Server(server, {
 });
 
 io.on("connection", async (socket: any) => {
-  const latest = (await SensorData.find().sort({ createdAt: -1 }).limit(1))[0];
+  const latest = (await SensorData.find().sort({ createdAt: -1 }).limit(30)).reverse();
   socket.emit("update", latest);
   console.log("a user connected");
 });
