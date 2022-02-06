@@ -1,5 +1,5 @@
 <template>
-  <div class="overlay">
+  <div class="overlay side">
     <div class="chart_container">
       <div class="row">
         <JSCharting class="chart" :options="waterChart"></JSCharting>
@@ -14,105 +14,33 @@
 </template>
 
 <script setup lang="ts">
-import JSCharting, { JSC } from "jscharting-vue";
-import { Ref, ref } from "vue";
+import JSCharting from "jscharting-vue";
+import { ref } from "vue";
 import { io } from "socket.io-client";
+import { createChart, createSeries } from "./utils/chart";
+import { SensorDataObj as SensorData } from "server/src/models/SensorData";
 const socket = io("localhost:8000");
 
-interface SensorData {
-  createdAt?: string;
-  updatedAt?: string;
-  _id?: string;
-  waterLevel: number;
-  temperature: number;
-  ec: number;
-  ph: number;
-}
-
-const tempData = ref<JSC.JSCSeriesConfig>({
-  name: "Temperature",
-  yAxis: "temperature",
-  defaultPoint_label: {
-    visible: true,
-    text: "%yValue °C",
-  },
-  points: [],
-});
-
-const ecData = ref<JSC.JSCSeriesConfig>({
-  name: "EC",
-  yAxis: "ec",
-  defaultPoint_label: {
-    visible: true,
-    text: "%yValue mS/cm",
-  },
-  points: [],
-});
-
-const phData = ref<JSC.JSCSeriesConfig>({
-  name: "pH",
-  yAxis: "ph",
-  defaultPoint_label: {
-    visible: true,
-    text: "%yValue",
-  },
-  points: [],
-});
-
-const waterData = ref<JSC.JSCSeriesConfig>({
-  name: "Water Level",
-  yAxis: "waterLevel",
-  defaultPoint_label: {
-    visible: true,
-    text: "%yValue l",
-  },
-  points: [],
-});
-
-const createChart = (
-  title: string,
-  data: Ref<JSC.JSCSeriesConfig>,
-  range: JSC.Range
-) => ({
-  type: "line spline",
-  title: {
-    position: "center",
-    label: {
-      text: title,
-    },
-  },
-  legend_visible: false,
-  xAxis: {
-    scale: {
-      type: "time",
-    },
-    defaultTick: {
-      enabled: false,
-    },
-  },
-  yAxis: {
-    defaultTick: {
-      enabled: false,
-    },
-    scale: {
-      range,
-    },
-  },
-  series: [data.value],
-});
-
-const waterChart = createChart("Water Level", waterData, [0, 50]);
+const tempData = ref(createSeries("Temperature", "temperature", "%yValue °C"));
 const tempChart = createChart("Temperature", tempData, [10, 30]);
+
+const waterData = ref(createSeries("Water Level", "waterLevel", "%yValue l"));
+const waterChart = createChart("Water Level", waterData, [0, 50]);
+
+const ecData = ref(createSeries("EC", "ec", "%yValue mS/cm"));
 const ecChart = createChart("EC", ecData, [0, 4000]);
+
+const phData = ref(createSeries("pH", "ph", "%yValue"));
 const phChart = createChart("pH", phData, [3, 8]);
 
 // const fixed = (value: number, n: number) => parseFloat(value.toFixed(n));
-const precision = (value: number, n: number) => parseFloat(value.toPrecision(n));
+const precision = (value: number, n: number) =>
+  parseFloat(value.toPrecision(n));
 
 const updateData = (data: SensorData) => {
   waterData.value.points?.push([data.createdAt, precision(data.waterLevel, 3)]);
   tempData.value.points?.push([data.createdAt, precision(data.temperature, 3)]);
-  ecData.value.points?.push([data.createdAt, precision(data.ec*1000, 3)]);
+  ecData.value.points?.push([data.createdAt, precision(data.ec * 1000, 3)]);
   phData.value.points?.push([data.createdAt, precision(data.ph, 2)]);
 
   // Make sure only 30 data points are showed at the same time.
@@ -120,11 +48,11 @@ const updateData = (data: SensorData) => {
   while (tempData.value.points?.length > 30) tempData.value.points?.shift();
   while (ecData.value.points?.length > 30) ecData.value.points?.shift();
   while (phData.value.points?.length > 30) phData.value.points?.shift();
-}
+};
 
 socket.on("update", (data: SensorData | SensorData[]) => {
   if (Array.isArray(data)) {
-    data.forEach(a => updateData(a));
+    data.forEach((a) => updateData(a));
   } else {
     updateData(data);
   }
