@@ -8,6 +8,13 @@ interface SensorData {
   time: number;
 }
 
+export interface SensorDataObj extends SensorData{
+  createdAt: string,
+  updatedAt: string,
+  _id: string,
+  __v: number
+}
+
 const SensorDataSchema = new mongoose.Schema<SensorData>(
   {
     waterLevel: Number,
