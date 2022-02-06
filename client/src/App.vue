@@ -28,7 +28,7 @@ const waterData = ref(createSeries("Water Level", "%yValue l"));
 const waterChart = createChart("Water Level", waterData, [0, 50]);
 
 const ecData = ref(createSeries("EC", "%yValue mS/cm"));
-const ecChart = createChart("EC", ecData, [0, 4000]);
+const ecChart = createChart("EC", ecData, [-1000, 5000]);
 
 const phData = ref(createSeries("pH", "%yValue"));
 const phChart = createChart("pH", phData, [3, 8]);
