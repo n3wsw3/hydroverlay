@@ -3,11 +3,9 @@ import { Ref } from "vue";
 
 export const createSeries = (
   name: string,
-  id: string,
   text: string
 ): JSC.JSCSeriesConfig => ({
   name,
-  yAxis: id,
   defaultPoint_label: {
     visible: true,
     text,

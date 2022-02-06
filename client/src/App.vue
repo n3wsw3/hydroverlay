@@ -21,16 +21,16 @@ import { createChart, createSeries } from "./utils/chart";
 import { SensorDataObj as SensorData } from "server/src/models/SensorData";
 const socket = io("localhost:8000");
 
-const tempData = ref(createSeries("Temperature", "temperature", "%yValue °C"));
+const tempData = ref(createSeries("Temperature", "%yValue °C"));
 const tempChart = createChart("Temperature", tempData, [10, 30]);
 
-const waterData = ref(createSeries("Water Level", "waterLevel", "%yValue l"));
+const waterData = ref(createSeries("Water Level", "%yValue l"));
 const waterChart = createChart("Water Level", waterData, [0, 50]);
 
-const ecData = ref(createSeries("EC", "ec", "%yValue mS/cm"));
+const ecData = ref(createSeries("EC", "%yValue mS/cm"));
 const ecChart = createChart("EC", ecData, [0, 4000]);
 
-const phData = ref(createSeries("pH", "ph", "%yValue"));
+const phData = ref(createSeries("pH", "%yValue"));
 const phChart = createChart("pH", phData, [3, 8]);
 
 // const fixed = (value: number, n: number) => parseFloat(value.toFixed(n));
@@ -123,6 +123,19 @@ body {
       flex-direction: column;
       .row {
         flex-direction: column;
+      }
+    }
+  }
+
+  &.square {
+    flex-direction: column;
+    .chart_container {
+      margin-left: 0;
+      margin-top: auto;
+      width: 800px;
+      flex-direction: column;
+      .row {
+        flex-direction: row;
       }
     }
   }
