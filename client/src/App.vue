@@ -1,16 +1,11 @@
 <template>
-  <div class="overlay side">
-    <div class="chart_container">
-      <div class="row">
-        <JSCharting class="chart" :options="waterChart"></JSCharting>
-        <JSCharting class="chart" :options="tempChart"></JSCharting>
-      </div>
-      <div class="row">
-        <JSCharting class="chart" :options="ecChart"></JSCharting>
-        <JSCharting class="chart" :options="phChart"></JSCharting>
-      </div>
-    </div>
-  </div>
+  <JSCharting class="chart" :options="waterChart"></JSCharting>
+  <JSCharting class="chart" :options="ecChart"></JSCharting>
+
+  <JSCharting class="chart" :options="phChart"></JSCharting>
+  <JSCharting class="chart" :options="tempChart"></JSCharting>
+  <clock></clock>
+  <digital></digital>
 </template>
 
 <script setup lang="ts">
@@ -20,6 +15,8 @@ import { io } from "socket.io-client";
 import { createChart, createSeries } from "./utils/chart";
 import { SensorDataObj as SensorData } from "server/src/models/SensorData";
 const socket = io("localhost:8000");
+import clock from "@/components/clock.vue";
+import digital from "./components/digital.vue";
 
 const tempData = ref(createSeries("Temperature", "%yValue °C"));
 const tempChart = createChart("Temperature", tempData, [10, 30]);
@@ -67,6 +64,7 @@ socket.on("update", (data: SensorData | SensorData[]) => {
 body {
   padding: 0;
   margin: 0;
+  background-color: indigo;
 }
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -136,6 +134,39 @@ body {
       flex-direction: column;
       .row {
         flex-direction: row;
+      }
+    }
+  }
+}
+.chart {
+  @aspect-ratio: 300/127;
+  @width: 600px;
+  @height: @width / @aspect-ratio;
+  width: @width;
+  height: @height;
+
+  // path {
+  //   fill: transparent;
+
+  //   path {
+  //     fill: white;
+  //   }
+  // }
+
+  #brandingLogo {
+    display: none;
+  }
+
+  svg {
+    g {
+      fill: white;
+    }
+
+    > g {
+      > g {
+        > path {
+          fill: transparent;
+        }
       }
     }
   }
