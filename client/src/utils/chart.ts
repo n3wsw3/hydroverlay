@@ -7,7 +7,7 @@ export const createSeries = (
 ): JSC.JSCSeriesConfig => ({
   name,
   defaultPoint_label: {
-    visible: true,
+    visible: false,
     text,
   },
   points: [],
@@ -23,8 +23,10 @@ export const createChart = (
     position: "center",
     label: {
       text: title,
+      color: "white",
     },
   },
+  palette: ["white"],
   legend_visible: false,
   xAxis: {
     scale: {
@@ -34,13 +36,20 @@ export const createChart = (
       enabled: false,
     },
   },
+  defaultPoint: {
+    marker: {
+      type: "none",
+    },
+  },
   yAxis: {
+    alternateGridFill: ["transparent", false],
     defaultTick: {
-      enabled: false,
+      enabled: true,
     },
     scale: {
       range,
     },
+    // line_color: "#eeeeee"
   },
   series: [data.value],
 });
